@@ -190,12 +190,24 @@
 }
 
 .card {
+  display: flex;
   background-color: #f8f9fa;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
   margin-bottom: 10px;
   cursor: pointer;
+  
+  & > div {
+    display: flex;
+    flex-wrap: wrap;
+    width: 88%;
+    overflow: hidden;
+    
+    & > p {
+      overflow-wrap: break-word;
+    }
+  }
 }
 
 .card button {

@@ -149,7 +149,9 @@ export default function Home() {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                         >
-                          <p>{list_item.title}</p>
+                          <div>
+                            <p>{list_item.title}</p>
+                          </div>
                           <button
                             className={styles.delete_card_btn}
                             onClick={() => deleteCard(list_item.id, list.id)}
