@@ -14,9 +14,11 @@
   align-items: flex-start;
   justify-content: flex-start;
   gap: 20px;
+  overflow-x: scroll;
 }
 
 .container_list {
+  min-width: 275px;
   width: 275px;
   display: flex;
   flex-direction: column;
@@ -131,6 +133,7 @@
 }
 
 .new_list_btn {
+  min-width: 275px;
   width: 275px;
   height: 45px;
   background-color: #007bff;
