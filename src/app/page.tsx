@@ -1,95 +1,214 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client"
+
+import styles from "./page.module.css"
+import React, { useState } from "react"
+import { IoMdClose } from "react-icons/io"
+import { CiTrash } from "react-icons/ci"
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
+import { v4 as uuidv4 } from "uuid"
+
+type ListTypes = {
+  id: string
+  title: string
+}
+
+type ListsTypes = {
+  id: string
+  title: string
+  lists: ListTypes[]
+}
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [lists, setLists] = useState<ListsTypes[]>([])
+  const [AddingNewList, setAddingNewList] = useState<boolean>(false)
+  const [tempTileList, setTempTitleList] = useState<string>("")
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  function handleAddingNewList() {
+    setAddingNewList(!AddingNewList)
+  }
+
+  function handleAddNewList() {
+    const id = uuidv4()
+    setLists((prevLists) => [
+      ...prevLists,
+      {
+        id: id,
+        title: tempTileList,
+        lists: [],
+      },
+    ])
+    handleAddingNewList()
+    setTempTitleList("")
+  }
+
+  function deleteList(list_id: string) {
+    setLists((prevLists) => prevLists.filter((list) => list.id !== list_id))
+  }
+
+  function onDragEnd(result: any) {
+    const { source, destination } = result
+
+    if (!destination) return // Dropped outside the list
+
+    // Rearranging lists
+    if (source.droppableId === "lists" && destination.droppableId === "lists") {
+      const reorderedLists = Array.from(lists)
+      const [removed] = reorderedLists.splice(source.index, 1)
+      reorderedLists.splice(destination.index, 0, removed)
+      setLists(reorderedLists)
+      return
+    }
+
+    // Moving cards between lists
+    if (source.droppableId !== destination.droppableId) {
+      const sourceListIndex = lists.findIndex((list) => list.id === source.droppableId)
+      const destListIndex = lists.findIndex((list) => list.id === destination.droppableId)
+      const sourceList = lists[sourceListIndex]
+      const destList = lists[destListIndex]
+
+      const [movedCard] = sourceList.lists.splice(source.index, 1)
+      destList.lists.splice(destination.index, 0, movedCard)
+
+      setLists((prevLists) => {
+        const updatedLists = [...prevLists]
+        updatedLists[sourceListIndex] = sourceList
+        updatedLists[destListIndex] = destList
+        return updatedLists
+      })
+    }
+  }
+
+  const RenderList = ({ list }: { list: ListsTypes }) => {
+    const [newCard, setNewCard] = useState<boolean>(false)
+    const [newCardTitle, setNewCardTitle] = useState<string>("")
+
+    function handleAddNewCard() {
+      setNewCard(!newCard)
+    }
+
+    function addNewCard(listId: string) {
+      const id = uuidv4()
+
+      setLists((prevLists) =>
+        prevLists.map((list) =>
+          list.id === listId
+            ? {
+              ...list,
+              lists: [...list.lists, { id: id, title: newCardTitle }],
+            }
+            : list
+        )
+      )
+
+      setNewCard(false)
+      setNewCardTitle("")
+    }
+
+    function deleteCard(card_id: string, list_id: string) {
+      setLists((prevLists) =>
+        prevLists.map((list) =>
+          list.id === list_id
+            ? {
+              ...list,
+              lists: list.lists.filter((card) => card.id !== card_id),
+            }
+            : list
+        )
+      )
+    }
+
+    return (
+      <Droppable droppableId={list.id}>
+        {(provided) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className={styles.container_list}
           >
-            <Image
-              className={styles.logo}
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+            <div className={styles.title_box}>
+              <p> {list.title} </p>
+              <button onClick={() => deleteList(list.id)}>
+                <CiTrash />
+              </button>
+            </div>
+            <div>
+              {list.lists.map((list_item, index) => (
+                <Draggable key={list_item.id} draggableId={list_item.id} index={index}>
+                  {(provided) => (
+                    <div
+                      className={styles.title_box}
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      {list_item.title}
+                      <button onClick={() => deleteCard(list_item.id, list.id)}>
+                        <CiTrash />
+                      </button>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+            <div>
+              {!newCard ? (
+                <button onClick={handleAddNewCard} className={styles.new_list_btn}>
+                  + Adicionar novo card
+                </button>
+              ) : (
+                <form className={styles.add_new_list_container}>
+                  <input
+                    autoFocus
+                    placeholder="Nome do seu card"
+                    value={newCardTitle}
+                    onChange={(e) => setNewCardTitle(e.target.value)}
+                  />
+                  <div>
+                    <button onClick={() => addNewCard(list.id)}>Adicionar card</button>
+                    <button onClick={handleAddNewCard}>
+                      <IoMdClose />
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        )}
+      </Droppable>
+    )
+  }
+
+  return (
+    <DragDropContext onDragEnd={onDragEnd}>
+      <div className={styles.page}>
+        <div className={styles.container}>
+          {lists &&
+            lists.map((list) => (
+              <RenderList key={list.id} list={list} />
+            ))}
+          {!AddingNewList ? (
+            <button onClick={handleAddingNewList} className={styles.new_list_btn}>
+              + Adicionar nova lista
+            </button>
+          ) : (
+            <form className={styles.add_new_list_container}>
+              <input
+                autoFocus
+                placeholder="Nome da sua Lista"
+                value={tempTileList}
+                onChange={(e) => setTempTitleList(e.target.value)}
+              />
+              <div>
+                <button onClick={handleAddNewList}>Adicionar lista</button>
+                <button onClick={handleAddingNewList}>
+                  <IoMdClose />
+                </button>
+              </div>
+            </form>
+          )}
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+      </div>
+    </DragDropContext>
+  )
 }
