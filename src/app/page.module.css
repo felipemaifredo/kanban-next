@@ -17,6 +17,7 @@
 }
 
 .container_list {
+  width: 275px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -24,15 +25,103 @@
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 250px;
   min-height: 150px;
 }
 
+.delete_list_btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+
+  & > svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.new_card_btn {
+  width: 100%;
+  height: 40px;
+  border-radius: 5px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color .3s;
+  
+  &:hover {
+    background-color: #c7c7c7;
+  }
+}
+
+.delete_card_btn {
+  background-color: transparent;
+}
+
 .title_box {
+ 
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-bottom: 10px;
+}
+
+.card {
+  height: auto;
+  min-height: 50px;
+  background-color: #c7c7c7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete_card_btn {
+  color: black !important;
+  height: 20px;
+  width: 20px;
+
+  & > svg {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.add_new_card_container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  & > input {
+    border: 1px solid #f8f9fa;
+    border-radius: 5px;
+    padding: 5px;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  & > div {
+    display: flex;
+    gap: 5px;
+
+    & > button {
+      height: 30px;
+      padding: 5px 10px;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    & button:nth-child(1) {
+      background-color: #28a745;
+    }
+
+    & button:nth-child(2) {
+      background-color: #dc3545;
+    }
+  }
 }
 
 .title_box p {
@@ -42,6 +131,8 @@
 }
 
 .new_list_btn {
+  width: 275px;
+  height: 45px;
   background-color: #007bff;
   color: white;
   border: none;
@@ -49,7 +140,6 @@
   border-radius: 5px;
   cursor: pointer;
   font-size: 1rem;
-  margin-top: 10px;
 }
 
 .new_list_btn:hover {
@@ -57,6 +147,8 @@
 }
 
 .add_new_list_container {
+  width: 275px;
+  height: 45px;
   display: flex;
   flex-direction: column;
   gap: 10px;

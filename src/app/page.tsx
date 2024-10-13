@@ -118,31 +118,34 @@ export default function Home() {
     }
 
     return (
-      <Droppable droppableId={list.id}>
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className={styles.container_list}
-          >
-            <div className={styles.title_box}>
-              <p> {list.title} </p>
-              <button onClick={() => deleteList(list.id)}>
-                <CiTrash />
-              </button>
-            </div>
-            <div>
+      <div className={styles.container_list}>
+        <div className={styles.title_box}>
+          <p> {list.title} </p>
+          <button
+            className={styles.delete_list_btn}
+            onClick={() => deleteList(list.id)}>
+            <CiTrash />
+          </button>
+        </div>
+        <Droppable droppableId={list.id}>
+          {(provided) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
               {list.lists.map((list_item, index) => (
                 <Draggable key={list_item.id} draggableId={list_item.id} index={index}>
                   {(provided) => (
                     <div
-                      className={styles.title_box}
+                      className={styles.card}
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                     >
-                      {list_item.title}
-                      <button onClick={() => deleteCard(list_item.id, list.id)}>
+                      <p>{list_item.title}</p>
+                      <button
+                        className={styles.delete_card_btn}
+                        onClick={() => deleteCard(list_item.id, list.id)}>
                         <CiTrash />
                       </button>
                     </div>
@@ -151,31 +154,31 @@ export default function Home() {
               ))}
               {provided.placeholder}
             </div>
-            <div>
-              {!newCard ? (
-                <button onClick={handleAddNewCard} className={styles.new_list_btn}>
-                  + Adicionar novo card
+          )}
+        </Droppable>
+        <div>
+          {!newCard ? (
+            <button onClick={handleAddNewCard} className={styles.new_card_btn}>
+              +  Adicionar novo card
+            </button>
+          ) : (
+            <form className={styles.add_new_card_container}>
+              <input
+                autoFocus
+                placeholder="Nome do seu card"
+                value={newCardTitle}
+                onChange={(e) => setNewCardTitle(e.target.value)}
+              />
+              <div>
+                <button onClick={() => addNewCard(list.id)}>Adicionar card</button>
+                <button onClick={handleAddNewCard}>
+                  <IoMdClose />
                 </button>
-              ) : (
-                <form className={styles.add_new_list_container}>
-                  <input
-                    autoFocus
-                    placeholder="Nome do seu card"
-                    value={newCardTitle}
-                    onChange={(e) => setNewCardTitle(e.target.value)}
-                  />
-                  <div>
-                    <button onClick={() => addNewCard(list.id)}>Adicionar card</button>
-                    <button onClick={handleAddNewCard}>
-                      <IoMdClose />
-                    </button>
-                  </div>
-                </form>
-              )}
-            </div>
-          </div>
-        )}
-      </Droppable>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
     )
   }
 
