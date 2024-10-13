@@ -14,7 +14,7 @@
   align-items: flex-start;
   justify-content: flex-start;
   gap: 20px;
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 .container_list {
@@ -150,6 +150,7 @@
 }
 
 .add_new_list_container {
+  min-width: 275px;
   width: 275px;
   height: 45px;
   display: flex;
