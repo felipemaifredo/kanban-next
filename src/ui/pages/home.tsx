@@ -148,29 +148,34 @@ export const HomePage = () => {
                         </div>
                         <Droppable droppableId={list.id}>
                             {(provided) => (
-                                <div ref={provided.innerRef} {...provided.droppableProps}>
-                                    {list.lists.map((list_item, index) => (
-                                        <Draggable key={list_item.id} draggableId={list_item.id} index={index}>
-                                            {(provided) => (
-                                                <div
-                                                    className={styles.card}
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                >
-                                                    <div>
-                                                        <p>{list_item.title}</p>
-                                                    </div>
-                                                    <button
-                                                        className={styles.delete_card_btn}
-                                                        onClick={() => deleteCard(list_item.id, list.id)}
+                                <div ref={provided.innerRef} {...provided.droppableProps} className={styles.card_container}>
+                                    {list.lists.length === 0 ? (
+                                        <div className={styles.empty_placeholder}>
+                                            {/* Espaço reservado para listas vazias */}
+                                            <p>Nenhum card</p>
+                                        </div>
+                                    ) : (
+                                        list.lists.map((list_item, index) => (
+                                            <Draggable key={list_item.id} draggableId={list_item.id} index={index}>
+                                                {(provided) => (
+                                                    <div
+                                                        className={styles.card}
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        {...provided.dragHandleProps}
                                                     >
-                                                        <CiTrash />
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </Draggable>
-                                    ))}
+                                                        <p>{list_item.title}</p>
+                                                        <button
+                                                            className={styles.delete_card_btn}
+                                                            onClick={() => deleteCard(list_item.id, list.id)}
+                                                        >
+                                                            <CiTrash />
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </Draggable>
+                                        ))
+                                    )}
                                     {provided.placeholder}
                                 </div>
                             )}

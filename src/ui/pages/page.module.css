@@ -7,6 +7,10 @@
   padding: 20px;
 }
 
+.empty_placeholder {
+  opacity: 0;
+}
+
 .container {
   width: 90%;
   height: 60%;
